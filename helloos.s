@@ -1,7 +1,8 @@
     .code16
-    .globl _start
-_start:
-    .byte 0xeb, 0x4e, 0x90
+.text
+    jmp entry
+
+    .byte 0x90
     .ascii "HELLOIPL"
     .word 512
     .byte 1
@@ -20,18 +21,26 @@ _start:
     .ascii "HELLO-OS   "
     .ascii "FAT12   "
     .skip 18, 0x00
-     
-    .byte   0xb8, 0x00, 0x00, 0x8e, 0xd0, 0xbc, 0x00, 0x7c
-    .byte   0x8e, 0xd8, 0x8e, 0xc0, 0xbe, 0x74, 0x7c, 0x8a
-    .byte   0x04, 0x83, 0xc6, 0x01, 0x3c, 0x00, 0x74, 0x09
-    .byte   0xb4, 0x0e, 0xbb, 0x0f, 0x00, 0xcd, 0x10, 0xeb
-    .byte   0xee, 0xf4, 0xeb, 0xfd
-     
+
+entry:
+    movw $0, %ax
+    movw %ax, %ss
+    movw $0x7c00, %sp
+    movw %ax, %ds
+    movw %ax, %es
+    movw $msg, %si
+putloop:
+    movb (%si), %al
+    addw $1, %si
+    cmpb $0, %al
+    je fin
+    movb $0x0e, %ah
+    movw $15, %bx
+    int $0x10
+    jmp putloop
+fin:
+    hlt
+    jmp fin
+msg:
     .byte 0x0a, 0x0a
-    .ascii "hello, world"
-    .byte 0x0a
-    .byte 0
-     
-    .org 0x1fe, 0x00
-     
-    .byte 0x55, 0xaa
+    .string "hello, world"
