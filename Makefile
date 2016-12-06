@@ -1,5 +1,8 @@
-helloos.img: helloos.o
-	ld --oformat binary -o helloos.img helloos.o
+helloos.img: helloos.bin
+	mformat -f 1440 -C -B helloos.bin -i helloos.img
+
+helloos.bin: helloos.o
+	ld --oformat binary -o helloos.bin helloos.o
 
 helloos.o: helloos.s
 	as -o helloos.o helloos.s
@@ -8,4 +11,4 @@ run: helloos.img
 	qemu-system-i386 helloos.img
 
 clean:
-	rm *.o *.img
+	rm *.o *.img *.bin
