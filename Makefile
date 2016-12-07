@@ -8,7 +8,7 @@ helloos.o: helloos.s
 	as -o helloos.o helloos.s
 
 run: helloos.img
-	qemu-system-i386 helloos.img
+	qemu-system-i386 -fda helloos.img
 
 clean:
 	rm *.o *.img *.bin
