@@ -1,5 +1,10 @@
-helloos.img: helloos.bin
+helloos.img: helloos.bin kos.bin
 	mformat -f 1440 -C -B helloos.bin -i helloos.img
+	mcopy kos.bin -i helloos.img ::
+
+kos.bin: kos.s
+	as -o kos.o kos.s
+	ld --oformat binary -o kos.bin kos.o
 
 helloos.bin: helloos.o link.ld
 	ld -T link.ld -o helloos.bin helloos.o
