@@ -5,8 +5,8 @@ ipl.img: ipl.bin sys.bin
 sys.bin: head.bin bootpack.bin
 	cat head.bin bootpack.bin > sys.bin
 
-bootpack.bin: bootpack.o func.o font.o
-	ld -m elf_i386 -o bootpack.bin -T bootpack.ld bootpack.o func.o font.o
+bootpack.bin: bootpack.o func.o font.o lib.o
+	ld -m elf_i386 -o bootpack.bin -T bootpack.ld bootpack.o lib.o func.o font.o
 
 bootpack.o: bootpack.c
 	gcc -m32 -nostdlib -Wl,--oformat=binary -c -o bootpack.o bootpack.c
@@ -31,6 +31,9 @@ font.o: font.c
 
 font.c: hankaku.txt
 	./make_font.py hankaku.txt > font.c
+
+lib.o: lib.c
+	gcc -m32 -c -o lib.o lib.c
 
 run: ipl.img
 	qemu-system-i386 -fda ipl.img
