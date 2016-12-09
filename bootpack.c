@@ -4,6 +4,9 @@ void Main(void);
 void init_palette(void);
 void set_palette(int, int, unsigned char *);
 void boxfill8(unsigned char *, int, unsigned char, int, int, int, int);
+void init_screen(char *, int, int);
+void putfont8(char *, int, int, int, char, char *);
+void putfonts8_asc(char *, int, int, int, char, unsigned char *);
 
 #define COL8_000000 0
 #define COL8_FF0000 1
@@ -22,35 +25,23 @@ void boxfill8(unsigned char *, int, unsigned char, int, int, int, int);
 #define COL8_008484 14
 #define COL8_848484 15
 
-void Main(void) {
+struct BOOTINFO {
+  char cyls;
+  char leds;
+  char vmode;
+  char reserve;
+  short scrnx;
+  short scrny;
   char *vram;
-  int xsize, ysize;
+};
+
+void Main(void) {
+  struct BOOTINFO *binfo = (struct BOOTINFO *)0x0ff0;
 
   init_palette();
-  vram = (char *)0xa0000;
-  xsize = 320;
-  ysize = 200;
+  init_screen(binfo->vram, binfo->scrnx, binfo->scrny);
 
-  boxfill8(vram, xsize, COL8_008484, 0, 0, xsize - 1, ysize - 29);
-  boxfill8(vram, xsize, COL8_C6C6C6, 0, ysize - 28, xsize - 1, ysize - 28);
-  boxfill8(vram, xsize, COL8_FFFFFF, 0, ysize - 27, xsize - 1, ysize - 27);
-  boxfill8(vram, xsize, COL8_C6C6C6, 0, ysize - 26, xsize - 1, ysize - 1);
-
-  boxfill8(vram, xsize, COL8_FFFFFF, 3, ysize - 24, 59, ysize - 24);
-  boxfill8(vram, xsize, COL8_FFFFFF, 2, ysize - 24, 2, ysize - 4);
-  boxfill8(vram, xsize, COL8_848484, 3, ysize - 4, 59, ysize - 4);
-  boxfill8(vram, xsize, COL8_848484, 59, ysize - 23, 59, ysize - 5);
-  boxfill8(vram, xsize, COL8_000000, 2, ysize - 3, 59, ysize - 3);
-  boxfill8(vram, xsize, COL8_000000, 60, ysize - 24, 60, ysize - 3);
-
-  boxfill8(vram, xsize, COL8_848484, xsize - 47, ysize - 24, xsize - 4,
-           ysize - 24);
-  boxfill8(vram, xsize, COL8_848484, xsize - 47, ysize - 23, xsize - 47,
-           ysize - 4);
-  boxfill8(vram, xsize, COL8_FFFFFF, xsize - 47, ysize - 3, xsize - 4,
-           ysize - 3);
-  boxfill8(vram, xsize, COL8_FFFFFF, xsize - 3, ysize - 24, xsize - 3,
-           ysize - 3);
+  putfonts8_asc(binfo->vram, binfo->scrnx, 8, 8, COL8_000000, "ABC 123.");
 
   for (;;) {
     io_hlt();
@@ -58,7 +49,7 @@ void Main(void) {
 }
 
 void init_palette(void) {
-  unsigned char table_rgb[16 * 3] = {
+  static unsigned char table_rgb[16 * 3] = {
       0x00, 0x00, 0x00,  //  0: black
       0xff, 0x00, 0x00,  //  1: red
       0x00, 0xff, 0x00,  //  2: green
@@ -103,4 +94,55 @@ void boxfill8(unsigned char *vram, int xsize, unsigned char c, int x0, int y0,
       vram[y * xsize + x] = c;
     }
   }
+}
+
+void init_screen(char *vram, int xsize, int ysize) {
+  boxfill8(vram, xsize, COL8_008484, 0, 0, xsize - 1, ysize - 29);
+  boxfill8(vram, xsize, COL8_C6C6C6, 0, ysize - 28, xsize - 1, ysize - 28);
+  boxfill8(vram, xsize, COL8_FFFFFF, 0, ysize - 27, xsize - 1, ysize - 27);
+  boxfill8(vram, xsize, COL8_C6C6C6, 0, ysize - 26, xsize - 1, ysize - 1);
+
+  boxfill8(vram, xsize, COL8_FFFFFF, 3, ysize - 24, 59, ysize - 24);
+  boxfill8(vram, xsize, COL8_FFFFFF, 2, ysize - 24, 2, ysize - 4);
+  boxfill8(vram, xsize, COL8_848484, 3, ysize - 4, 59, ysize - 4);
+  boxfill8(vram, xsize, COL8_848484, 59, ysize - 23, 59, ysize - 5);
+  boxfill8(vram, xsize, COL8_000000, 2, ysize - 3, 59, ysize - 3);
+  boxfill8(vram, xsize, COL8_000000, 60, ysize - 24, 60, ysize - 3);
+
+  boxfill8(vram, xsize, COL8_848484, xsize - 47, ysize - 24, xsize - 4,
+           ysize - 24);
+  boxfill8(vram, xsize, COL8_848484, xsize - 47, ysize - 23, xsize - 47,
+           ysize - 4);
+  boxfill8(vram, xsize, COL8_FFFFFF, xsize - 47, ysize - 3, xsize - 4,
+           ysize - 3);
+  boxfill8(vram, xsize, COL8_FFFFFF, xsize - 3, ysize - 24, xsize - 3,
+           ysize - 3);
+}
+
+void putfont8(char *vram, int xsize, int x, int y, char c, char *font) {
+  int i;
+  char *p, d;
+  for (i = 0; i < 16; i++) {
+    p = vram + (y + i) * xsize + x;
+    d = font[i];
+    if ((d & 0x80) != 0) p[0] = c;
+    if ((d & 0x40) != 0) p[1] = c;
+    if ((d & 0x20) != 0) p[2] = c;
+    if ((d & 0x10) != 0) p[3] = c;
+    if ((d & 0x08) != 0) p[4] = c;
+    if ((d & 0x04) != 0) p[5] = c;
+    if ((d & 0x02) != 0) p[6] = c;
+    if ((d & 0x01) != 0) p[7] = c;
+  }
+  return;
+}
+
+void putfonts8_asc(char *vram, int xsize, int x, int y, char c,
+                   unsigned char *s) {
+  extern unsigned char hankaku[4096];
+  for (; *s != 0x00; s++) {
+    putfont8(vram, xsize, x, y, c, hankaku + *s * 16);
+    x += 8;
+  }
+  return;
 }
