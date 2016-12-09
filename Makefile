@@ -1,42 +1,37 @@
-ipl.img: ipl.bin sys.bin
-	mformat -f 1440 -C -B ipl.bin -i ipl.img
-	mcopy sys.bin -i ipl.img ::
+objs = bootpack.o lib.o func.o font.o graphic.o dsctbl.o
+img = sys.img
 
-sys.bin: head.bin bootpack.bin
+CC = gcc
+CFLAGS = -m32
+LD = ld
+LDFLAGS = -m elf_i386
+AS = as
+ASFLAGS = --32
+
+$(img): ipl.bin head.bin bootpack.bin
 	cat head.bin bootpack.bin > sys.bin
+	mformat -f 1440 -C -B ipl.bin -i $@
+	mcopy sys.bin -i $@ ::
 
-bootpack.bin: bootpack.o func.o font.o lib.o
-	ld -m elf_i386 -o bootpack.bin -T bootpack.ld bootpack.o lib.o func.o font.o
+bootpack.bin: $(objs)
+	$(LD) $(LDFLAGS) -T bootpack.ld -o $@ $(objs)
 
-bootpack.o: bootpack.c
-	gcc -m32 -nostdlib -Wl,--oformat=binary -c -o bootpack.o bootpack.c
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $*.c
 
-head.bin: head.o
-	ld -m elf_i386 -T head.ld -o head.bin head.o
-
-head.o: head.s
-	as --32 -o head.o head.s
-
-ipl.bin: ipl.o ipl.ld
-	ld -m elf_i386 -T ipl.ld -o ipl.bin ipl.o
-
-ipl.o: ipl.s
-	as --32 -o ipl.o ipl.s
+%.bin: %.s %.ld
+	$(AS) $(ASFLAGS) -o $*.o $*.s
+	$(LD) $(LDFLAGS) -T $*.ld -o $@ $*.o
 
 func.o: func.s
-	as --32 -o func.o func.s
-
-font.o: font.c
-	gcc -m32 -c -o font.o font.c
+	$(AS) $(ASFLAGS) --32 -o $@ $*.s
 
 font.c: hankaku.txt
-	./make_font.py hankaku.txt > font.c
+	./make_font.py hankaku.txt > $@
 
-lib.o: lib.c
-	gcc -m32 -c -o lib.o lib.c
+run: $(img)
+	qemu-system-i386 -fda $(img)
 
-run: ipl.img
-	qemu-system-i386 -fda ipl.img
-
+.PHONY: clean
 clean:
 	rm *.o *.img *.bin font.c
