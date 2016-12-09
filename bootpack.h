@@ -5,6 +5,8 @@ extern void io_out8(int port, int data);
 
 extern int io_load_eflags(void);
 extern void io_store_eflags(int eflags);
+extern void load_gdtr(int limit, int addr);
+extern void load_idtr(int limit, int addr);
 
 extern int myitoa(char *dest, int v);
 void mysprintf(char *dest, const char *string, ...);
