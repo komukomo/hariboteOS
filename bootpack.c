@@ -17,6 +17,7 @@ void Main(void) {
   int mx = (binfo->scrnx - 28 - 16) / 2;
 
   init_gdtidt();
+  init_pic();
   init_palette();
   init_screen(binfo->vram, binfo->scrnx, binfo->scrny);
 
