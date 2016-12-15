@@ -35,3 +35,7 @@ run: $(img)
 .PHONY: clean
 clean:
 	rm *.o *.img *.bin font.c *.map
+
+lib_test: lib.o test/lib_test.c
+	$(CC) -m32 -o test/lib_test test/lib_test.c lib.o
+	./test/lib_test && echo 'Success, lib_test passed'

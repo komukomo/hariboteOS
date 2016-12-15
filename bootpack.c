@@ -41,13 +41,13 @@ void Main(void) {
       if (fifo8_status(&keyfifo) != 0) {
         i = fifo8_get(&keyfifo);
         io_sti();
-        mysprintf(s, "%d", i);
+        mysprintf(s, "%X", i);
         boxfill8(binfo->vram, binfo->scrnx, COL8_008484, 0, 16, 15, 31);
         putfonts8_asc(binfo->vram, binfo->scrnx, 0, 16, COL8_FFFFFF, s);
       } else if (fifo8_status(&mousefifo) != 0) {
         i = fifo8_get(&mousefifo);
         io_sti();
-        mysprintf(s, "%d", i);
+        mysprintf(s, "%X", i);
         boxfill8(binfo->vram, binfo->scrnx, COL8_008484, 32, 16, 47, 31);
         putfonts8_asc(binfo->vram, binfo->scrnx, 32, 16, COL8_FFFFFF, s);
       }
