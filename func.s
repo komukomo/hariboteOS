@@ -1,6 +1,6 @@
 .code32
 .globl io_hlt, io_cli, io_sti
-.globl io_out8
+.globl io_out8, io_in8
 .globl io_store_eflags, io_load_eflags
 .globl load_gdtr, load_idtr
 .globl asm_inthandler21, asm_inthandler2c, asm_inthandler27
@@ -24,6 +24,13 @@ io_out8:
     movl 4(%esp), %edx
     movb 8(%esp), %al
     outb %al, %dx
+    ret
+
+# int io_in8(int port)
+io_in8:
+    movl 4(%esp), %edx
+    movl $0, %eax
+    inb %dx, %al
     ret
 
 # void io_store_eflags(int eflags)

@@ -2,7 +2,7 @@ objs = bootpack.o int.o lib.o func.o font.o graphic.o dsctbl.o
 img = sys.img
 
 CC = gcc
-CFLAGS = -m32
+CFLAGS = -m32 -nostdlib
 LD = ld
 LDFLAGS = -m elf_i386 -Map bootpack.map
 AS = as
