@@ -12,6 +12,7 @@ struct BOOTINFO {
 extern void io_hlt(void);
 extern void io_cli(void);
 extern void io_sti(void);
+extern void io_stihlt(void);
 extern int io_in8(int port);
 extern void io_out8(int port, int data);
 extern int io_load_eflags(void);
@@ -24,6 +25,15 @@ void asm_inthandler2c(void);
 
 extern int myitoa(char *dest, int v);
 void mysprintf(char *dest, const char *string, ...);
+
+struct FIFO8 {
+  unsigned char *buf;
+  int p, q, size, free, flags;
+};
+void fifo8_init(struct FIFO8 *fifo, int size, unsigned char *buf);
+int fifo8_put(struct FIFO8 *fifo, unsigned char data);
+int fifo8_get(struct FIFO8 *fifo);
+int fifo8_status(struct FIFO8 *fifo);
 
 #define COL8_000000 0
 #define COL8_FF0000 1

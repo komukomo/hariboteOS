@@ -1,5 +1,5 @@
 .code32
-.globl io_hlt, io_cli, io_sti
+.globl io_hlt, io_cli, io_sti, io_stihlt
 .globl io_out8, io_in8
 .globl io_store_eflags, io_load_eflags
 .globl load_gdtr, load_idtr
@@ -18,6 +18,11 @@ io_cli:
 io_sti:
     sti
     ret 
+
+io_stihlt:
+    sti
+    hlt
+    ret
 
 # void io_out8(int port, int data)
 io_out8:
