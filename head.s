@@ -87,7 +87,7 @@ pipelineflush:
 
 skip:
     movl $0x00310000, %esp # !!
-    ljmpl $2*8, $0x00000000 # !!
+    ljmpl $2*8, $BOTPAK # code segment -> 2 !!
 
 
 waitkbdout:
@@ -109,9 +109,8 @@ memcpy:
     .align 8
 GDT0:
     .skip 8, 0x00
-    .word 0xffff, 0x0000, 0x9200, 0x00cf
-    .word 0xffff, 0x0000, 0x9a28, 0x0047
-
+    .word 0xffff, 0x0000, 0x9200, 0x00cf # data
+    .word 0xffff, 0x0000, 0x9a00, 0x00cf # code !!
     .word 0x0000
 
 GDTR0:
