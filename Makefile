@@ -4,7 +4,7 @@ img = sys.img
 CC = gcc
 CFLAGS = -m32
 LD = ld
-LDFLAGS = -m elf_i386
+LDFLAGS = -m elf_i386 -Map bootpack.map
 AS = as
 ASFLAGS = --32
 
@@ -30,8 +30,8 @@ font.c: hankaku.txt
 	./make_font.py hankaku.txt > $@
 
 run: $(img)
-	qemu-system-i386 -fda $(img)
+	qemu-system-i386 -fda $(img) -monitor stdio
 
 .PHONY: clean
 clean:
-	rm *.o *.img *.bin font.c
+	rm *.o *.img *.bin font.c *.map
