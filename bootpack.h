@@ -9,23 +9,28 @@ struct BOOTINFO {
 };
 #define ADR_BOOTINFO 0x00000ff0
 
-extern void io_hlt(void);
-extern void io_cli(void);
-extern void io_sti(void);
-extern void io_stihlt(void);
-extern int io_in8(int port);
-extern void io_out8(int port, int data);
-extern int io_load_eflags(void);
-extern void io_store_eflags(int eflags);
-extern void load_gdtr(int limit, int addr);
-extern void load_idtr(int limit, int addr);
+// func.s
+void io_hlt(void);
+void io_cli(void);
+void io_sti(void);
+void io_stihlt(void);
+int io_in8(int port);
+void io_out8(int port, int data);
+int io_load_eflags(void);
+void io_store_eflags(int eflags);
+void load_gdtr(int limit, int addr);
+void load_idtr(int limit, int addr);
+int load_cr0(void);
+void store_cr0(int cr0);
 void asm_inthandler21(void);
 void asm_inthandler27(void);
 void asm_inthandler2c(void);
 
+// lib.c
 extern int myitoa(char *dest, int v);
 void mysprintf(char *dest, const char *string, ...);
 
+// fifo.c
 struct FIFO8 {
   unsigned char *buf;
   int p, q, size, free, flags;
@@ -35,6 +40,7 @@ int fifo8_put(struct FIFO8 *fifo, unsigned char data);
 int fifo8_get(struct FIFO8 *fifo);
 int fifo8_status(struct FIFO8 *fifo);
 
+// graphic.c
 #define COL8_000000 0
 #define COL8_FF0000 1
 #define COL8_00FF00 2
@@ -61,6 +67,7 @@ void putfonts8_asc(char *, int, int, int, char, unsigned char *);
 void init_mouse_cursor8(char *, char);
 void putblock8_8(char *, int, int, int, int, int, char *, int);
 
+// dsctbl.c
 struct SEGMENT_DESCRIPTOR {
   short limit_low;
   short base_low;

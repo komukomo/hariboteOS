@@ -1,5 +1,10 @@
 #include "bootpack.h"
 
+unsigned int memtest(unsigned int start, unsigned int end);
+unsigned int memtest_sub(unsigned int start, unsigned int end);
+int chk_486_or_newer(void);
+void ctl_cache(char flg);
+
 void Main(void) {
   struct BOOTINFO *binfo = (struct BOOTINFO *)ADR_BOOTINFO;
   char s[40], mcursor[256], keybuf[32], mousebuf[128];
@@ -29,6 +34,10 @@ void Main(void) {
   putblock8_8(binfo->vram, binfo->scrnx, 16, 16, mx, my, mcursor, 16);
 
   enable_mouse(&mdec);
+
+  i = memtest(0x00400000, 0xbfffffff) / (1024 * 1024);
+  mysprintf(s, "memory %dMB", i);
+  putfonts8_asc(binfo->vram, binfo->scrnx, 0, 32, COL8_FFFFFF, s);
 
   while (1) {
     io_cli();
@@ -87,4 +96,73 @@ void Main(void) {
       }
     }
   }
+}
+
+#define DISABLE_CACHE 0
+#define ENABLE_CACHE 1
+unsigned int memtest(unsigned int start, unsigned int end) {
+  unsigned int mem;
+  int is486 = chk_486_or_newer();
+
+  if (is486) {
+    ctl_cache(DISABLE_CACHE);
+  }
+  mem = memtest_sub(start, end);
+  if (is486) {
+    ctl_cache(ENABLE_CACHE);
+  }
+  return mem;
+}
+
+#define CR0_CACHE_DISABLE 0x60000000
+void ctl_cache(char flg) {
+  int cr0 = load_cr0();
+  switch (flg) {
+    case DISABLE_CACHE:
+      cr0 |= CR0_CACHE_DISABLE;
+      break;
+    case ENABLE_CACHE:
+      cr0 &= ~CR0_CACHE_DISABLE;
+      break;
+  }
+  store_cr0(cr0);
+}
+
+#define EFLAGS_AC_BIT 0x00040000
+int chk_486_or_newer(void) {
+  unsigned int eflg;
+  int result = 0;
+
+  eflg = io_load_eflags();
+  eflg |= EFLAGS_AC_BIT;  // AC-bit = 1
+  io_store_eflags(eflg);
+  eflg = io_load_eflags();
+  if ((eflg & EFLAGS_AC_BIT) != 0) {
+    // 386ではAC=1にしても自動で0に戻ってしまう
+    result = 1;
+  }
+  eflg &= ~EFLAGS_AC_BIT;  // AC-bit = 0
+  io_store_eflags(eflg);
+  return result;
+}
+
+unsigned int memtest_sub(unsigned int start, unsigned int end) {
+  unsigned int i, *p, old, pat0 = 0xaa55aa55, pat1 = 0x55aa55aa;
+  for (i = start; i <= end; i += 0x1000) {
+    p = (unsigned int *)(i + 0xffc);
+    old = *p;         /* いじる前の値を覚えておく */
+    *p = pat0;        /* ためしに書いてみる */
+    *p ^= 0xffffffff; /* そしてそれを反転してみる */
+    if (*p != pat1) { /* 反転結果になったか？ */
+    not_memory:
+      *p = old;
+      break;
+    }
+    *p ^= 0xffffffff; /* もう一度反転してみる */
+    if (*p != pat0) { /* 元に戻ったか？ */
+      goto not_memory;
+    }
+    *p = old; /* いじった値を元に戻す */
+  }
+  return i;
 }
