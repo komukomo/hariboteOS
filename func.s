@@ -4,8 +4,8 @@
 .globl io_store_eflags, io_load_eflags
 .globl load_gdtr, load_idtr
 .globl load_cr0, store_cr0
-.globl asm_inthandler21, asm_inthandler2c, asm_inthandler27
-.extern inthandler21, inthandler2c, inthandler27
+.globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
+.extern inthandler20, inthandler21, inthandler2c, inthandler27
 .text
 
 io_hlt:
@@ -76,6 +76,22 @@ store_cr0:
     movl 4(%esp), %eax
     movl %eax, %cr0
     ret
+
+asm_inthandler20:
+    push %es
+    push %ds
+    pusha
+    mov %esp, %eax
+    push %eax
+    mov %ss, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    call inthandler20
+    pop %eax
+    popa
+    pop %ds
+    pop %es
+    iret
 
 asm_inthandler21:
     push %es
