@@ -4,7 +4,8 @@ void make_window8(unsigned char *buf, int xsize, int ysize, char *title);
 
 void Main(void) {
   struct BOOTINFO *binfo = (struct BOOTINFO *)ADR_BOOTINFO;
-  char s[40], keybuf[32], mousebuf[128];
+  struct FIFO8 timerfifo;
+  char s[40], keybuf[32], mousebuf[128], timerbuf[8];
   int mx, my, i;
   unsigned int memtotal;
   struct MOUSE_DEC mdec;
@@ -19,8 +20,11 @@ void Main(void) {
   fifo8_init(&keyfifo, 32, keybuf);
   fifo8_init(&mousefifo, 128, mousebuf);
   init_pit();
-  io_out8(PIC0_IMR, 0xf8); /* PIT, PIC1, キーボードを許可(11111001) */
+  io_out8(PIC0_IMR, 0xf8); /* PITとPIC1とキーボードを許可(11111000) */
   io_out8(PIC1_IMR, 0xef); /* マウスを許可(11101111) */
+
+  fifo8_init(&timerfifo, 8, timerbuf);
+  settimer(1000, &timerfifo, 1);
 
   init_keyboard();
   enable_mouse(&mdec);
@@ -66,7 +70,9 @@ void Main(void) {
     sheet_refresh(sht_win, 40, 28, 120, 44);
 
     io_cli();
-    if (fifo8_status(&keyfifo) + fifo8_status(&mousefifo) == 0) {
+    if (fifo8_status(&keyfifo) + fifo8_status(&mousefifo) +
+            fifo8_status(&timerfifo) ==
+        0) {
       io_sti();
     } else {
       if (fifo8_status(&keyfifo) != 0) {
@@ -118,6 +124,11 @@ void Main(void) {
           sheet_refresh(sht_back, 0, 0, 80, 16);
           sheet_slide(sht_mouse, mx, my);
         }
+      } else if (fifo8_status(&timerfifo) != 0) {
+        i = fifo8_get(&timerfifo); /* とりあえず読み込む（からにするために） */
+        io_sti();
+        putfonts8_asc(buf_back, binfo->scrnx, 0, 64, COL8_FFFFFF, "10[sec]");
+        sheet_refresh(sht_back, 0, 64, 56, 80);
       }
     }
   }
