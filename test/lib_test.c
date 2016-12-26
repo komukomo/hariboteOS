@@ -4,6 +4,8 @@
 
 extern int _base_itoa(char *dest, int v, int base);
 extern void mysprintf(char *dest, const char *string, ...);
+extern int chk_format(char *str);
+extern int read_digit(int *num, const char *str);
 
 void test_itoa() {
   char buf[8];
@@ -68,6 +70,18 @@ void test_sprintf() {
 
   mysprintf(buf, "% %X", 31);
   assert(strcmp(buf, "% 1F") == 0);
+
+  mysprintf(buf, "%3d", 2);
+  assert(strcmp(buf, "  2") == 0);
+
+  mysprintf(buf, "%04d", 11);
+  assert(strcmp(buf, "0011") == 0);
+
+  mysprintf(buf, "%04X", 10);
+  assert(strcmp(buf, "000A") == 0);
+
+  mysprintf(buf, "%02d", 1111);
+  assert(strcmp(buf, "1111") == 0);
 
   return;
 }
