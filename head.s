@@ -2,6 +2,8 @@
 .equ DSKCAC, 0x00100000
 .equ DSKCAC0, 0x00008000
 
+.equ VBEMODE, 0x101
+
 .equ CYLS, 0x0ff0
 .equ LEDS, 0x0ff1
 .equ VMODE, 0x0ff2
@@ -12,15 +14,61 @@
 .text
 .code16
 head:
+
+# VBE存在確認
+    movw $0x9000, %ax
+    movw %ax, %es
+    movw $0x00, %di
+    movw $0x4f00, %ax
+    int $0x10
+    cmpw $0x004f, %ax
+    jne scrn320
+
+# VBEのバージョンチェック
+    movw %es:4(%di), %ax
+    cmpw $0x0200, %ax
+    jb scrn320
+
+# 画面モード情報を得る
+    movw $VBEMODE, %cx
+    movw $0x4f01, %ax
+    int $0x10
+    cmp $0x004f, %ax
+    jne scrn320
+
+# 画面モード情報の確認
+    cmpb $0x08, %es:0x19(%di)
+    jne scrn320
+    cmpb $0x04, %es:0x1b(%di)
+    jne scrn320
+    movw %es:0x00(%di), %ax
+    andw $0x0080, %ax
+    jz scrn320
+
+# 画面モードの切り替え
+    movw $VBEMODE+0x4000, %bx
+    movw $0x4f02, %ax
+    int $0x10
+
+    movb $0x08, (VMODE)
+    movw %es:0x12(%di), %ax
+    movw %ax, (SCRNX)
+    movw %es:0x14(%di), %ax
+    movw %ax, (SCRNY)
+    movl %es:0x28(%edi), %eax
+    movl %eax, (VRAM)
+    jmp keystatus
+
+scrn320:
     movb $0x13, %al
     movb $0x00, %ah
     int $0x10
-
     movb $0x08, (VMODE)
     movw $320, (SCRNX)
     movw $200, (SCRNY)
     movl $0x000a0000, (VRAM)
 
+keystatus:
     movb $0x02, %ah
     int $0x16 # keyboard
     movb %al, (LEDS)

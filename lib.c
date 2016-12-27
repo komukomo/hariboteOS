@@ -5,7 +5,7 @@ void _shift(char *s, int len) {
   }
 }
 
-int _base_itoa(char *dest, int v, int base) {
+int _base_itoa(char *dest, unsigned int v, int base) {
   // negative value unsupported
   int len = 0;
   int offset = 48;  // char code 48 -> '0'

@@ -8,7 +8,7 @@ extern int chk_format(char *str);
 extern int read_digit(int *num, const char *str);
 
 void test_itoa() {
-  char buf[8];
+  char buf[16];
   int base;
 
   base = 10;
@@ -49,6 +49,9 @@ void test_itoa() {
 
   _base_itoa(buf, 255, base);
   assert(strcmp(buf, "FF") == 0);
+
+  _base_itoa(buf, 0xe2345678, base);
+  assert(strcmp(buf, "E2345678") == 0);
 
   return;
 }
