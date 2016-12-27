@@ -4,7 +4,9 @@
 .globl io_store_eflags, io_load_eflags
 .globl load_gdtr, load_idtr
 .globl load_cr0, store_cr0
+.globl load_tr
 .globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
+.globl taskswitch4
 .extern inthandler20, inthandler21, inthandler2c, inthandler27
 .text
 
@@ -77,6 +79,11 @@ store_cr0:
     movl %eax, %cr0
     ret
 
+# void load_tr(int tr);
+load_tr:
+    ltr 4(%esp)
+    ret
+
 asm_inthandler20:
     push %es
     push %ds
@@ -140,3 +147,9 @@ asm_inthandler2c:
     pop %ds
     pop %es
     iret
+
+
+# void taskswitch4(void);
+taskswitch4:
+    jmp $4*8, $0
+    ret

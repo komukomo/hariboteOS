@@ -22,6 +22,7 @@ void load_gdtr(int limit, int addr);
 void load_idtr(int limit, int addr);
 int load_cr0(void);
 void store_cr0(int cr0);
+void load_tr(int tr);
 void asm_inthandler20(void);
 void asm_inthandler21(void);
 void asm_inthandler27(void);
@@ -97,6 +98,7 @@ void set_segmdesc(struct SEGMENT_DESCRIPTOR *, unsigned int, int, int);
 #define LIMIT_BOTPAK 0x0007ffff
 #define AR_DATA32_RW 0x4092
 #define AR_CODE32_ER 0x409a
+#define AR_TSS32 0x0089
 #define AR_INTGATE32 0x008e
 
 // int.c
