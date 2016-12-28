@@ -12,6 +12,7 @@ $(img): ipl.bin head.bin bootpack.bin
 	cat head.bin bootpack.bin > sys.bin
 	mformat -f 1440 -C -B ipl.bin -i $@
 	mcopy sys.bin -i $@ ::
+	mcopy int.c -i $@ ::
 
 bootpack.bin: $(objs) bootpack.ld
 	$(LD) $(LDFLAGS) -T bootpack.ld -o $@ $(objs)
