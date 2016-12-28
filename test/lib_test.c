@@ -7,6 +7,7 @@ extern void mysprintf(char *dest, const char *string, ...);
 extern int chk_format(char *str);
 extern int read_digit(int *num, const char *str);
 extern int mystrcmp(const char *s1, const char *s2);
+extern int mystrncmp(const char *s1, const char *s2, int size);
 
 void test_itoa() {
   char buf[16];
@@ -106,9 +107,17 @@ void test_strcmp() {
   }
 }
 
+void test_strncmp() {
+  assert(mystrncmp("abc", "abc", 4) == 0);
+  assert(mystrncmp("abcde", "abc", 3) == 0);
+  assert(mystrncmp("abcde", "abc", 4) == 1);
+  assert(mystrncmp("abc", "abcd", 4) == -1);
+}
+
 int main() {
   test_itoa();
   test_sprintf();
   test_strcmp();
+  test_strncmp();
   return 0;
 }

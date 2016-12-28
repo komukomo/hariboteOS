@@ -126,3 +126,11 @@ int mystrcmp(const char *s1, const char *s2) {
   }
   return *s1 > *s2 ? 1 : -1;
 }
+
+int mystrncmp(const char *s1, const char *s2, unsigned int size) {
+  int i = 1;
+  for (; *s1 == *s2; s1++, s2++, i++) {
+    if (*s1 == '\0' || i == size) return 0;
+  }
+  return *s1 > *s2 ? 1 : -1;
+}
