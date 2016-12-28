@@ -1,4 +1,4 @@
-objs = bootpack.o int.o mtask.o timer.o sheet.o memory.o lib.o fifo.o mouse.o keyboard.o func.o font.o graphic.o dsctbl.o
+objs = bootpack.o window.o console.o file.o int.o mtask.o timer.o sheet.o memory.o lib.o fifo.o mouse.o keyboard.o func.o font.o graphic.o dsctbl.o
 img = sys.img
 
 CC = gcc
