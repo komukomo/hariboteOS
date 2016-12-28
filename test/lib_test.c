@@ -6,6 +6,7 @@ extern int _base_itoa(char *dest, int v, int base);
 extern void mysprintf(char *dest, const char *string, ...);
 extern int chk_format(char *str);
 extern int read_digit(int *num, const char *str);
+extern int mystrcmp(const char *s1, const char *s2);
 
 void test_itoa() {
   char buf[16];
@@ -89,8 +90,25 @@ void test_sprintf() {
   return;
 }
 
+void test_strcmp() {
+  int i;
+  char t[][2][16] = {
+      {"hoge", "hoge"},  // 0
+      {"ab", "hcd"},     // -1
+      {"cd", "ab"},      // 1
+      {"abc", "ab"},     // 1
+      {"ab", "abc"},     // -1
+  };
+  for (i = 0; i < 5; i++) {
+    char *s0 = t[i][0];
+    char *s1 = t[i][1];
+    assert(strcmp(s0, s1) == mystrcmp(s0, s1));
+  }
+}
+
 int main() {
   test_itoa();
   test_sprintf();
+  test_strcmp();
   return 0;
 }

@@ -119,3 +119,10 @@ void mysprintf(char *dest, const char *tmpl, ...) {
   }
   *dest = '\0';
 }
+
+int mystrcmp(const char *s1, const char *s2) {
+  for (; *s1 == *s2; s1++, s2++) {
+    if (*s1 == '\0') return 0;
+  }
+  return *s1 > *s2 ? 1 : -1;
+}
