@@ -32,6 +32,7 @@ void farjmp(int eip, int cs);
 // lib.c
 extern int myitoa(char *dest, int v);
 void mysprintf(char *dest, const char *string, ...);
+int mystrcmp(const char *s1, const char *s2);
 
 // fifo.c
 struct FIFO32 {
