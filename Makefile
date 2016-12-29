@@ -4,7 +4,7 @@ img = sys.img
 CC = gcc
 CFLAGS = -m32 -nostdlib
 LD = ld
-LDFLAGS = -m elf_i386 -Map bootpack.map
+LDFLAGS = -m elf_i386
 AS = as
 ASFLAGS = --32
 
@@ -16,7 +16,7 @@ $(img): ipl.bin head.bin bootpack.bin hlt.bin
 	mcopy hlt.bin -i $@ ::
 
 bootpack.bin: $(objs) bootpack.ld
-	$(LD) $(LDFLAGS) -T bootpack.ld -o $@ $(objs)
+	$(LD) -v $(LDFLAGS) -Map bootpack.map -T bootpack.ld -o $@ $(objs)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $*.c

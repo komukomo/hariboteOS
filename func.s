@@ -7,7 +7,9 @@
 .globl load_tr
 .globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
 .globl farjmp
+.globl asm_cons_putchar
 .extern inthandler20, inthandler21, inthandler2c, inthandler27
+.extern cons_putchar
 .text
 
 io_hlt:
@@ -153,4 +155,13 @@ asm_inthandler2c:
 farjmp:
     ljmpl *4(%esp)
     ret
+
+asm_cons_putchar:
+    push $1
+    #andl 0xff, %eax
+    push %eax
+    push (0x0fec)
+    call cons_putchar
+    add $12, %esp
+    lret
 
