@@ -1,13 +1,11 @@
-.equ ASM_CONS_PUTCHAR, 0x0284153
-
     movl $'H', %eax
-    lcall $2*8, $ASM_CONS_PUTCHAR
+    int $0x40
     movl $'E', %eax
-    lcall $2*8, $ASM_CONS_PUTCHAR
+    int $0x40
     movl $'L', %eax
-    lcall $2*8, $ASM_CONS_PUTCHAR
+    int $0x40
     movl $'L', %eax
-    lcall $2*8, $ASM_CONS_PUTCHAR
+    int $0x40
     movl $'O', %eax
-    lcall $2*8, $ASM_CONS_PUTCHAR
+    int $0x40
     lret

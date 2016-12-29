@@ -30,6 +30,7 @@ void asm_inthandler27(void);
 void asm_inthandler2c(void);
 void farjmp(int eip, int cs);
 void farcall(int eip, int cs);
+void asm_cons_putchar(void);
 
 // lib.c
 extern int myitoa(char *dest, int v);

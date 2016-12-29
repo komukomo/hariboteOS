@@ -162,11 +162,12 @@ farcall:
     ret
 
 asm_cons_putchar:
+    sti
     push $1
     #andl 0xff, %eax
     push %eax
     push (0x0fec)
     call cons_putchar
     add $12, %esp
-    lret
+    iret
 
