@@ -1,6 +1,13 @@
+.equ ASM_CONS_PUTCHAR, 0x0284153
 
-    movl $0x41, %eax # 'A'
-    lcall $2*8, $0x028414e # asm_cons_putchar
-fin:
-    hlt
-    jmp fin
+    movl $'H', %eax
+    lcall $2*8, $ASM_CONS_PUTCHAR
+    movl $'E', %eax
+    lcall $2*8, $ASM_CONS_PUTCHAR
+    movl $'L', %eax
+    lcall $2*8, $ASM_CONS_PUTCHAR
+    movl $'L', %eax
+    lcall $2*8, $ASM_CONS_PUTCHAR
+    movl $'O', %eax
+    lcall $2*8, $ASM_CONS_PUTCHAR
+    lret

@@ -6,7 +6,7 @@
 .globl load_cr0, store_cr0
 .globl load_tr
 .globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
-.globl farjmp
+.globl farjmp, farcall
 .globl asm_cons_putchar
 .extern inthandler20, inthandler21, inthandler2c, inthandler27
 .extern cons_putchar
@@ -154,6 +154,11 @@ asm_inthandler2c:
 # void farjmp(int eip, int cs);
 farjmp:
     ljmpl *4(%esp)
+    ret
+
+# void farcall(int eip, int cs);
+farcall:
+    lcall *4(%esp)
     ret
 
 asm_cons_putchar:
