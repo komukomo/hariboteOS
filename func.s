@@ -7,9 +7,9 @@
 .globl load_tr
 .globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
 .globl farjmp, farcall
-.globl asm_cons_putchar
+.globl asm_hrb_api
 .extern inthandler20, inthandler21, inthandler2c, inthandler27
-.extern cons_putchar
+.extern hrb_api
 .text
 
 io_hlt:
@@ -161,13 +161,12 @@ farcall:
     lcall *4(%esp)
     ret
 
-asm_cons_putchar:
+asm_hrb_api:
     sti
-    push $1
-    #andl 0xff, %eax
-    push %eax
-    push (0x0fec)
-    call cons_putchar
-    add $12, %esp
+    pusha
+    pusha
+    call hrb_api
+    add $32, %esp
+    popa
     iret
 

@@ -8,12 +8,13 @@ LDFLAGS = -m elf_i386
 AS = as
 ASFLAGS = --32
 
-$(img): ipl.bin head.bin bootpack.bin hello.bin
+$(img): ipl.bin head.bin bootpack.bin hello.bin hello2.bin
 	cat head.bin bootpack.bin > sys.bin
 	mformat -f 1440 -C -B ipl.bin -i $@
 	mcopy sys.bin -i $@ ::
 	mcopy int.c -i $@ ::
 	mcopy hello.bin -i $@ ::
+	mcopy hello2.bin -i $@ ::
 
 bootpack.bin: $(objs) bootpack.ld
 	$(LD) -v $(LDFLAGS) -Map bootpack.map -T bootpack.ld -o $@ $(objs)
