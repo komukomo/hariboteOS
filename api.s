@@ -1,5 +1,6 @@
 .global api_putchar, api_putstr0, api_end, api_openwin
 .global api_putstrwin, api_boxfilwin
+.global api_initmalloc, api_malloc, api_free
 .extern Main
 .text
     .long 0x10000 # segment size
@@ -89,4 +90,38 @@ api_boxfilwin:
     pop  %ebp
     pop  %esi
     pop  %edi
+    ret
+
+# void api_initmalloc(void);
+api_initmalloc:
+    push %ebx
+    mov  $8, %edx
+    mov  %cs:0x0020, %ebx # malloc領域の番地
+    mov  %ebx, %eax
+    add  32*1024, %eax     # 32kbを足す
+    mov  %cs:0x0000, %ecx  # データセグメントの大きさ
+    sub  %eax, %ecx
+    int  $0x40
+    pop  %ebx
+    ret
+
+# char *api_malloc(int size);
+api_malloc:
+    push %ebx
+    mov  $9, %edx
+    mov  %cs:0x0020, %ebx
+    mov  8(%esp), %ecx # size
+    int  $0x40
+    pop  %ebx
+    ret
+
+# void api_free(char *addr, int size);
+api_free:
+    push %ebx
+    mov  $10, %edx
+    mov  %cs:0x0020, %ebx
+    mov  8(%esp), %eax # addr
+    mov  12(%esp), %ecx # size
+    int  $0x40
+    pop  %ebx
     ret
