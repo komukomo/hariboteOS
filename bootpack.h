@@ -25,6 +25,7 @@ int load_cr0(void);
 void store_cr0(int cr0);
 void load_tr(int tr);
 void asm_inthandler0d(void);
+void asm_inthandler0c(void);
 void asm_inthandler20(void);
 void asm_inthandler21(void);
 void asm_inthandler27(void);

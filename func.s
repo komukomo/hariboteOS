@@ -6,12 +6,12 @@
 .globl load_cr0, store_cr0
 .globl load_tr
 .globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
-.globl asm_inthandler0d
+.globl asm_inthandler0c, asm_inthandler0d
 .globl farjmp, farcall
 .globl asm_hrb_api
 .globl start_app
 .extern inthandler20, inthandler21, inthandler2c, inthandler27
-.extern inthandler0d
+.extern inthandler0c, inthandler0d
 .extern hrb_api
 .text
 
@@ -151,6 +151,26 @@ asm_inthandler2c:
     popa
     pop %ds
     pop %es
+    iret
+
+asm_inthandler0c:
+    sti
+    push %es
+    push %ds
+    pusha
+    mov %esp, %eax
+    push %eax
+    mov %ss, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    call inthandler0c
+    cmp $0, %eax
+    jne end_app
+    pop %eax
+    popa
+    pop %ds
+    pop %es
+    add $4, %esp
     iret
 
 asm_inthandler0d:
