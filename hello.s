@@ -1,4 +1,4 @@
-    movb $msg, %cl
+    movl $msg, %ecx
     movl $1, %edx
 putloop:
     movb %cs:(%ecx), %al
@@ -8,6 +8,7 @@ putloop:
     add $1, %ecx
     jmp putloop
 fin:
-    lret
+    mov $4, %edx
+    int $0x40
 msg:
-    .ascii "hello"
+    .ascii "hello\0"

@@ -6,9 +6,12 @@
 .globl load_cr0, store_cr0
 .globl load_tr
 .globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
+.globl asm_inthandler0d
 .globl farjmp, farcall
 .globl asm_hrb_api
+.globl start_app
 .extern inthandler20, inthandler21, inthandler2c, inthandler27
+.extern inthandler0d
 .extern hrb_api
 .text
 
@@ -150,6 +153,26 @@ asm_inthandler2c:
     pop %es
     iret
 
+asm_inthandler0d:
+    sti
+    push %es
+    push %ds
+    pusha
+    mov %esp, %eax
+    push %eax
+    mov %ss, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    call inthandler0d
+    cmp $0, %eax
+    jne end_app
+    pop %eax
+    popa
+    pop %ds
+    pop %es
+    add $4, %esp
+    iret
+
 
 # void farjmp(int eip, int cs);
 farjmp:
@@ -163,10 +186,47 @@ farcall:
 
 asm_hrb_api:
     sti
+    push %ds
+    push %es
     pusha
     pusha
+    mov %ss, %ax
+    mov %ax, %ds
+    mov %ax, %es
     call hrb_api
+    cmp $0, %eax
+    jne end_app
     add $32, %esp
     popa
+    pop %es
+    pop %ds
     iret
+
+end_app:
+    mov (%eax), %esp
+    popa
+    ret # return to cmp_app
+
+# void start_app(int eip, int cs, int esp, int ds, int *tss_esp0);
+start_app:
+    pusha # 32ビットレジスタを全部保存しておく
+    mov 36(%esp), %eax # アプリ用のEIP
+    mov 40(%esp), %ecx # アプリ用のCS
+    mov 44(%esp), %edx # アプリ用のESP
+    mov 48(%esp), %ebx # アプリ用のDS/SS
+    mov 52(%esp), %ebp # tss.esp0の番地
+    mov %esp, (%ebp) # OS用のESPを保存
+    mov %ss, 4(%ebp) # OS用のSSを保存
+    mov %bx, %es
+    mov %bx, %ds
+    mov %bx, %fs
+    mov %bx, %gs
+# 以下はlretでアプリに行かせるためのスタック調整
+    or $3, %ecx # アプリ用のセグメント番号に3をorする
+    or $3, %ebx # アプリ用のセグメント番号に3をorする
+    push %ebx   # アプリのss
+    push %edx   # アプリのesp
+    push %ecx   # アプリのcs
+    push %eax   # アプリのeip
+    lret
 

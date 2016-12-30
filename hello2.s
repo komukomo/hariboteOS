@@ -1,7 +1,8 @@
     mov  $2, %edx
     mov $msg, %ebx
     int  $0x40
-    lret
+    mov $4, %edx
+    int $0x40
 
 msg:
-    .ascii "hello2"
+    .ascii "hello2\0"
