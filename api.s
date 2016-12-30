@@ -1,4 +1,5 @@
 .global api_putchar, api_putstr0, api_end, api_openwin
+.global api_putstrwin, api_boxfilwin
 .extern Main
 .text
     .long 0x10000 # segment size
@@ -46,6 +47,46 @@ api_openwin:
     mov  32(%esp), %ecx # TITLE
     int  $0X40
     pop  %ebx
+    pop  %esi
+    pop  %edi
+    ret
+
+# void api_putstrwin(int win, int x, int y, int col, int len, char *str);
+api_putstrwin:
+    push %edi
+    push %esi
+    push %ebp
+    push %ebx
+    mov  $6, %edx
+    mov  20(%esp), %ebx # win
+    mov  24(%esp), %esi # x
+    mov  28(%esp), %edi # y
+    mov  32(%esp), %eax # col
+    mov  36(%esp), %ecx # len
+    mov  40(%esp), %ebp # str
+    int  $0X40
+    pop  %ebx
+    pop  %ebp
+    pop  %esi
+    pop  %edi
+    ret
+
+# void api_boxfilwin(int win, int x0, int y0, int x1, int y1, int col);
+api_boxfilwin:
+    push %edi
+    push %esi
+    push %ebp
+    push %ebx
+    mov  $7, %edx
+    mov  20(%esp), %ebx # win
+    mov  24(%esp), %eax # x0
+    mov  28(%esp), %ecx # y0
+    mov  32(%esp), %esi # x1
+    mov  36(%esp), %edi # y1
+    mov  40(%esp), %ebp # col
+    int  $0x40
+    pop  %ebx
+    pop  %ebp
     pop  %esi
     pop  %edi
     ret
