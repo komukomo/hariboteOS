@@ -7,6 +7,7 @@
 .globl load_tr
 .globl asm_inthandler20, asm_inthandler21, asm_inthandler2c, asm_inthandler27
 .globl asm_inthandler0c, asm_inthandler0d
+.globl asm_end_app
 .globl farjmp, farcall
 .globl asm_hrb_api
 .globl start_app
@@ -165,7 +166,7 @@ asm_inthandler0c:
     mov %ax, %es
     call inthandler0c
     cmp $0, %eax
-    jne end_app
+    jne asm_end_app
     pop %eax
     popa
     pop %ds
@@ -185,7 +186,7 @@ asm_inthandler0d:
     mov %ax, %es
     call inthandler0d
     cmp $0, %eax
-    jne end_app
+    jne asm_end_app
     pop %eax
     popa
     pop %ds
@@ -215,15 +216,16 @@ asm_hrb_api:
     mov %ax, %es
     call hrb_api
     cmp $0, %eax
-    jne end_app
+    jne asm_end_app
     add $32, %esp
     popa
     pop %es
     pop %ds
     iret
 
-end_app:
+asm_end_app:
     mov (%eax), %esp
+    movw $0, 4(%eax)
     popa
     ret # return to cmp_app
 
