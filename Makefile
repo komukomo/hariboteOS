@@ -8,7 +8,7 @@ LDFLAGS = -m elf_i386
 AS = as
 ASFLAGS = --32
 
-$(img): ipl.bin head.bin bootpack.bin hello.bin hello2.bin a.out
+$(img): ipl.bin head.bin bootpack.bin hello.bin hello2.bin a.out crack1.out
 	cat head.bin bootpack.bin > sys.bin
 	mformat -f 1440 -C -B ipl.bin -i $@
 	mcopy sys.bin -i $@ ::
@@ -16,6 +16,7 @@ $(img): ipl.bin head.bin bootpack.bin hello.bin hello2.bin a.out
 	mcopy hello.bin -i $@ ::
 	mcopy hello2.bin -i $@ ::
 	mcopy a.out -i $@ ::
+	mcopy crack1.out -i $@ ::
 
 bootpack.bin: $(objs) bootpack.ld
 	$(LD) -v $(LDFLAGS) -Map bootpack.map -T bootpack.ld -o $@ $(objs)
@@ -36,9 +37,9 @@ font.c: hankaku.txt
 run: $(img)
 	qemu-system-i386 -fda $(img) -monitor stdio
 
-a.out: api.s api.ld a.c
+%.out: api.s api.ld %.c
 	$(AS) $(ASFLAGS) -o api.o api.s
-	$(CC) $(CFLAGS) -T api.ld -o $@ api.o a.c
+	$(CC) $(CFLAGS) -T api.ld -o $@ api.o $*.c
 
 
 .PHONY: clean
