@@ -286,7 +286,11 @@ int cmd_app(struct CONSOLE *cons, int *fat, char *cmdline) {
                   (char *)(ADR_DISKIMG + 0x003e00));
     set_segmdesc(gdt + 1003, finfo->size - 1, (int)p, AR_CODE32_ER + 0x60);
     set_segmdesc(gdt + 1004, 64 * 1024 - 1, (int)q, AR_DATA32_RW + 0x60);
-    start_app(0, 1003 * 8, 64 * 1024, 1004 * 8, &(task->tss.esp0));
+    if (finfo->size >= 8 && mystrncmp(p + 4, "Hari", 4) == 0) {
+      start_app(0x1b, 1003 * 8, 64 * 1024, 1004 * 8, &(task->tss.esp0));
+    } else {
+      start_app(0, 1003 * 8, 64 * 1024, 1004 * 8, &(task->tss.esp0));
+    }
     memman_free_4k(memman, (int)p, finfo->size);
     memman_free_4k(memman, (int)q, 64 * 1024);
     cons_newline(cons);
