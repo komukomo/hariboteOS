@@ -1,4 +1,4 @@
-.global api_putchar, api_putstr0, api_end
+.global api_putchar, api_putstr0, api_end, api_openwin
 .extern Main
 .text
     .long 0x10000 # segment size
@@ -32,3 +32,20 @@ api_putstr0:
 api_end:
     mov $4, %edx
     int $0x40
+
+# int api_openwin(char *buf, int xsiz, int ysiz, int col_inv, char *title);
+api_openwin:
+    push %edi
+    push %esi
+    push %ebx
+    mov  $5, %edx
+    mov  16(%esp), %ebx # BUF
+    mov  20(%esp), %esi # XSIZ
+    mov  24(%esp), %edi # YSIZ
+    mov  28(%esp), %eax # COL_INV
+    mov  32(%esp), %ecx # TITLE
+    int  $0X40
+    pop  %ebx
+    pop  %esi
+    pop  %edi
+    ret
