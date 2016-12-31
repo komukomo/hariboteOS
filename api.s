@@ -5,6 +5,7 @@
 .global api_getkey
 .global api_alloctimer, api_inittimer, api_settimer, api_freetimer
 .global api_refreshwin, api_linewin, api_openwin, api_closewin
+.global api_beep
 .extern Main
 .text
     .long 0x10000 # segment size
@@ -232,4 +233,11 @@ api_freetimer:
     mov  8(%esp), %ebx # timer
     int  $0x40
     pop  %ebx
+    ret
+
+# void api_beep(int tone);
+api_beep:
+    mov  $20, %edx
+    mov  4(%esp), %eax  # tone
+    int  $0x40
     ret
