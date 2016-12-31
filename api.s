@@ -2,7 +2,7 @@
 .global api_putstrwin, api_boxfilwin
 .global api_initmalloc, api_malloc, api_free
 .global api_point
-.global api_refreshwin, api_linewin
+.global api_refreshwin, api_linewin, api_openwin, api_closewin
 .extern Main
 .text
     .long 0x10000 # segment size
@@ -180,3 +180,13 @@ api_linewin:
     pop  %esi
     pop  %edi
     ret
+
+# void api_closewin(int win);
+api_closewin:
+    push %ebx
+    mov  $14, %edx
+    mov  8(%esp), %ebx # win
+    int  $0x40
+    pop  %ebx
+    ret
+
