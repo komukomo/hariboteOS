@@ -1,6 +1,7 @@
 .global api_putchar, api_putstr0, api_end, api_openwin
 .global api_putstrwin, api_boxfilwin
 .global api_initmalloc, api_malloc, api_free
+.global api_point
 .extern Main
 .text
     .long 0x10000 # segment size
@@ -124,4 +125,20 @@ api_free:
     mov  12(%esp), %ecx # size
     int  $0x40
     pop  %ebx
+    ret
+
+# void api_point(int win, int x, int y, int col);
+api_point:
+    push %edi
+    push %esi
+    push %ebx
+    mov  $11, %edx
+    mov  16(%esp), %ebx # win
+    mov  20(%esp), %esi # x
+    mov  24(%esp), %edi # y
+    mov  28(%esp), %eax # col
+    int  $0x40
+    pop  %ebx
+    pop  %esi
+    pop  %edi
     ret
