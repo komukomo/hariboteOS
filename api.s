@@ -2,6 +2,7 @@
 .global api_putstrwin, api_boxfilwin
 .global api_initmalloc, api_malloc, api_free
 .global api_point
+.global api_getkey
 .global api_refreshwin, api_linewin, api_openwin, api_closewin
 .extern Main
 .text
@@ -188,5 +189,12 @@ api_closewin:
     mov  8(%esp), %ebx # win
     int  $0x40
     pop  %ebx
+    ret
+
+# int api_getkey(int mode);
+api_getkey:
+    mov  $15, %edx
+    mov  4(%esp), %eax # mode
+    int  $0x40
     ret
 
