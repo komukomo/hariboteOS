@@ -3,15 +3,16 @@
 .global api_initmalloc, api_malloc, api_free
 .global api_point
 .global api_getkey
+.global api_alloctimer, api_inittimer, api_settimer, api_freetimer
 .global api_refreshwin, api_linewin, api_openwin, api_closewin
 .extern Main
 .text
     .long 0x10000 # segment size
     .ascii "Hari" # Hari-format
     .long 0
-    .long 0x400 # esp
-    .long 0x400 # data size
-    .long 0x400 # data address
+    .long 0x800 # esp
+    .long 0x800 # data size
+    .long 0x800 # data address
     .word 0
     .byte 0
     call Main
@@ -198,3 +199,37 @@ api_getkey:
     int  $0x40
     ret
 
+# int api_alloctimer(void);
+api_alloctimer:
+    mov  $16, %edx
+    int  $0x40
+    ret
+
+# void api_inittimer(int timer, int data);
+api_inittimer:
+    push %ebx
+    mov  $17, %edx
+    mov  8(%esp), %ebx # timer
+    mov  12(%esp), %eax # data
+    int  $0x40
+    pop  %ebx
+    ret
+
+# void api_settimer(int timer, int time);
+api_settimer:
+    push %ebx
+    mov  $18, %edx
+    mov  8(%esp), %ebx # timer
+    mov  12(%esp), %eax # time
+    int  $0x40
+    pop  %ebx
+    ret
+
+# void api_freetimer(int timer);
+api_freetimer:
+    push %ebx
+    mov  $19, %edx
+    mov  8(%esp), %ebx # timer
+    int  $0x40
+    pop  %ebx
+    ret
