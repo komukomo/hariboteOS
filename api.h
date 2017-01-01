@@ -15,3 +15,8 @@ void api_putstr0(char *s);
 void api_putstrwin(int win, int x, int y, int col, int len, char *str);
 void api_refreshwin(int win, int x0, int y0, int x1, int y1);
 void api_settimer(int timer, int time);
+int api_fopen(char *fname);
+void api_fclose(int fhandle);
+void api_fseek(int fhandle, int offset, int mode);
+int api_fsize(int fhandle, int mode);
+int api_fread(char *buf, int maxsize, int fhandle);

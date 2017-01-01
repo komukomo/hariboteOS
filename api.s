@@ -6,6 +6,7 @@
 .global api_alloctimer, api_inittimer, api_settimer, api_freetimer
 .global api_refreshwin, api_linewin, api_openwin, api_closewin
 .global api_beep
+.global api_fopen, api_fseek, api_fclose, api_fsize, api_fread
 
 # void api_putchar(int c);
 api_putchar:
@@ -228,4 +229,50 @@ api_beep:
     mov  $20, %edx
     mov  4(%esp), %eax  # tone
     int  $0x40
+    ret
+
+# int api_fopen(char *fname);
+api_fopen:
+    push %ebx
+    mov  $21, %edx
+    mov  8(%esp), %ebx  # fname
+    int  $0x40
+    pop  %ebx
+    ret
+
+# void api_fclose(int fhandle);
+api_fclose:
+    mov  $22, %edx
+    mov  4(%esp), %eax   # fhandle
+    int  $0x40
+    ret
+
+# void api_fseek(int fhandle, int offset, int mode);
+api_fseek:
+    push %ebx
+    mov  $23, %edx
+    mov  8(%esp), %eax  # fhandle
+    mov  16(%esp), %ecx  # mode
+    mov  12(%esp), %ebx  # offset
+    int  $0x40
+    pop  %ebx
+    ret
+
+# int api_fsize(int fhandle, int mode);
+api_fsize:
+    mov  $24, %edx
+    mov  4(%esp), %eax   # fhandle
+    mov  4(%esp), %ecx   # mode
+    int  $0x40
+    ret
+
+# int api_fread(char *buf, int maxsize, int fhandle);
+api_fread:
+    push %ebx
+    mov  $25, %edx
+    mov  16(%esp), %eax  # fhandle
+    mov  12(%esp), %ecx  # maxsize
+    mov  8(%esp), %ebx   # buf
+    int  $0x40
+    pop  %ebx
     ret
