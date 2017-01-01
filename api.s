@@ -7,6 +7,7 @@
 .global api_refreshwin, api_linewin, api_openwin, api_closewin
 .global api_beep
 .global api_fopen, api_fseek, api_fclose, api_fsize, api_fread
+.global api_cmdline
 
 # void api_putchar(int c);
 api_putchar:
@@ -271,6 +272,16 @@ api_fread:
     push %ebx
     mov  $25, %edx
     mov  16(%esp), %eax  # fhandle
+    mov  12(%esp), %ecx  # maxsize
+    mov  8(%esp), %ebx   # buf
+    int  $0x40
+    pop  %ebx
+    ret
+
+# int api_cmdline(char *buf, int maxsize);
+api_cmdline:
+    push %ebx
+    mov  $26, %edx
     mov  12(%esp), %ecx  # maxsize
     mov  8(%esp), %ebx   # buf
     int  $0x40
