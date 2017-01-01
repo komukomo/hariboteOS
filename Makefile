@@ -8,7 +8,7 @@ LDFLAGS = -m elf_i386
 AS = as
 ASFLAGS = --32
 
-$(img): ipl.bin head.bin bootpack.bin a.hrb hello4.hrb winhelo.hrb winhelo2.hrb winhelo3.hrb star1.hrb lines.hrb walk.hrb noodle.hrb beepdown.hrb color.hrb color2.hrb typeint.hrb type.hrb iroha.hrb chklang.hrb
+$(img): ipl.bin head.bin bootpack.bin a.hrb hello4.hrb winhelo.hrb winhelo2.hrb winhelo3.hrb star1.hrb lines.hrb walk.hrb noodle.hrb beepdown.hrb color.hrb color2.hrb typeint.hrb type.hrb iroha.hrb chklang.hrb bball.hrb
 	cat head.bin bootpack.bin > sys.bin
 	mformat -f 1440 -C -B ipl.bin -i $@
 	mcopy sys.bin -i $@ ::
@@ -29,6 +29,7 @@ $(img): ipl.bin head.bin bootpack.bin a.hrb hello4.hrb winhelo.hrb winhelo2.hrb 
 	mcopy type.hrb -i $@ ::
 	mcopy iroha.hrb -i $@ ::
 	mcopy chklang.hrb -i $@ ::
+	mcopy bball.hrb -i $@ ::
 	mcopy euc.txt -i $@ ::
 	mcopy nihongo.fnt -i $@ ::
 
