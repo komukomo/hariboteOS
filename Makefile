@@ -12,7 +12,7 @@ $(img): ipl.bin head.bin bootpack.bin a.hrb hello4.hrb winhelo.hrb winhelo2.hrb 
 	cat head.bin bootpack.bin > sys.bin
 	mformat -f 1440 -C -B ipl.bin -i $@
 	mcopy sys.bin -i $@ ::
-	mcopy int.c -i $@ ::
+	mcopy type.c -i $@ ::
 	mcopy a.hrb -i $@ ::
 	mcopy hello4.hrb -i $@ ::
 	mcopy winhelo.hrb -i $@ ::

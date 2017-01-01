@@ -1,4 +1,4 @@
-.equ CYLS, 10
+.equ CYLS, 20
 .text
 .code16
     jmp entry

@@ -32,6 +32,7 @@ void console_task(struct SHEET *sheet, int memtotal) {
   } else {
     task->langmode = 0;
   }
+  task->langbyte1 = 0;
 
   /* プロンプト表示 */
   cons_putchar(&cons, '>', 1);
@@ -154,6 +155,7 @@ void cons_putchar(struct CONSOLE *cons, int chr, char move) {
 void cons_newline(struct CONSOLE *cons) {
   int x, y;
   struct SHEET *sheet = cons->sht;
+  struct TASK *task = task_now();
   if (cons->cur_y < 28 + 112) {
     cons->cur_y += 16; /* 次の行へ */
   } else {
@@ -174,6 +176,9 @@ void cons_newline(struct CONSOLE *cons) {
     }
   }
   cons->cur_x = 8;
+  if (task->langmode == 1 && task->langbyte1 != 0) {
+    cons->cur_x = 16;
+  }
   return;
 }
 
@@ -390,6 +395,7 @@ int cmd_app(struct CONSOLE *cons, int *fat, char *cmdline) {
       }
       timer_cancelall(&task->fifo);
       memman_free_4k(memman, (int)q, segsiz);
+      task->langbyte1 = 0;
     } else {
       cons_putstr0(cons, ".hrb file format error.\n");
     }
