@@ -1,12 +1,12 @@
 .extern Main
 .text
-    .long 0x10000 # segment size
+    .long 0xf0000 # segment size
     .ascii "Hari" # Hari-format
     .long 0
-    .long 0x900 # esp
-    .long 0x900 # data size
-    .long 0x900 # data address
+    .long 0x20000 # esp
+    .long 0x20000 # data size
+    .long 0x20000 # data address
     .word 0
     .byte 0
     jmp Main
-    .long 0x01200 # malloc address
+    .long 0x40000 # malloc address

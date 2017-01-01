@@ -134,3 +134,10 @@ int mystrncmp(const char *s1, const char *s2, unsigned int size) {
   }
   return *s1 > *s2 ? 1 : -1;
 }
+
+int mystrlen(const char *s) {
+  int i = 0;
+  for (; *s; s++, i++)
+    ;
+  return i;
+}
