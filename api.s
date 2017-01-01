@@ -8,6 +8,7 @@
 .global api_beep
 .global api_fopen, api_fseek, api_fclose, api_fsize, api_fread
 .global api_cmdline
+.global api_getlang
 
 # void api_putchar(int c);
 api_putchar:
@@ -286,4 +287,10 @@ api_cmdline:
     mov  8(%esp), %ebx   # buf
     int  $0x40
     pop  %ebx
+    ret
+
+# int api_getlang(void);
+api_getlang:
+    mov $27, %edx
+    int $0x40
     ret

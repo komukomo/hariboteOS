@@ -613,6 +613,8 @@ int *hrb_api(int edi, int esi, int ebp, int esp, int ebx, int edx, int ecx,
       i++;
     }
     reg[7] = i;
+  } else if (edx == 27) {
+    reg[7] = task->langmode;
   }
   return 0;
 }
