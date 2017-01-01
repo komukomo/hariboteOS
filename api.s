@@ -6,18 +6,6 @@
 .global api_alloctimer, api_inittimer, api_settimer, api_freetimer
 .global api_refreshwin, api_linewin, api_openwin, api_closewin
 .global api_beep
-.extern Main
-.text
-    .long 0x10000 # segment size
-    .ascii "Hari" # Hari-format
-    .long 0
-    .long 0x800 # esp
-    .long 0x800 # data size
-    .long 0x800 # data address
-    .word 0
-    .byte 0
-    call Main
-    lret
 
 # void api_putchar(int c);
 api_putchar:

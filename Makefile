@@ -45,14 +45,17 @@ font.c: hankaku.txt
 run: $(img)
 	qemu-system-i386 -fda $(img) -monitor stdio
 
-%.hrb: api.s api.ld %.c lib.o
-	$(AS) $(ASFLAGS) -o api.o api.s
-	$(CC) $(CFLAGS) -T api.ld -o $@ api.o $*.c lib.c
+libapi.a: api.s
+	as --32 api.s -o api.o
+	ar r libapi.a api.o
+
+%.hrb: %.c hrbhead.s libapi.a
+	$(CC) $(CFLAGS) -L./ -I./ hrbhead.s $*.c lib.c -lapi -T api.ld -o $*.hrb
 
 
 .PHONY: clean
 clean:
-	rm *.o *.img *.bin font.c *.map *.hrb
+	rm *.o *.img *.bin font.c *.map *.hrb *.a
 
 lib_test: lib.o test/lib_test.c
 	$(CC) -m32 -o test/lib_test test/lib_test.c lib.o
