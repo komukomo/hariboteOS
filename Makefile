@@ -28,6 +28,7 @@ $(img): ipl.bin head.bin bootpack.bin a.hrb hello4.hrb winhelo.hrb winhelo2.hrb 
 	mcopy typeint.hrb -i $@ ::
 	mcopy type.hrb -i $@ ::
 	mcopy iroha.hrb -i $@ ::
+	mcopy euc.txt -i $@ ::
 	mcopy nihongo.fnt -i $@ ::
 
 bootpack.bin: $(objs) bootpack.ld
